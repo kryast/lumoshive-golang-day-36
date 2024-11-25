@@ -3,10 +3,26 @@ package repository
 import (
 	"database/sql"
 	"day-36/model"
-	"fmt"
+	"errors"
 
 	"go.uber.org/zap"
 )
+
+type ProductRepoInterface interface {
+	GetProductById(productId int) (*model.Product, error)
+}
+
+type ProductRepositoryDB struct {
+	DB     *sql.DB
+	Logger *zap.Logger
+}
+
+func NewProductRepository(db *sql.DB, Log *zap.Logger) ProductRepoInterface {
+	return &ProductRepositoryDB{
+		DB:     db,
+		Logger: Log,
+	}
+}
 
 func (repo *ProductRepositoryDB) GetProductById(productId int) (*model.Product, error) {
 	query := `
@@ -44,7 +60,7 @@ func (repo *ProductRepositoryDB) GetProductById(productId int) (*model.Product, 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			repo.Logger.Warn("Product not found", zap.Int("productId", productId), zap.Error(err))
-			return nil, fmt.Errorf("item with id %d not found", productId)
+			return nil, errors.New("product not found")
 		}
 		return nil, err
 	}
