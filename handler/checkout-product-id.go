@@ -22,9 +22,11 @@ func NewProductHandler(service service.AllService, logger *zap.Logger, config ut
 		Config:  config,
 	}
 }
-
 func (ph *ProductHandler) GetProductByIdHandler(w http.ResponseWriter, r *http.Request) {
 	id := helper.GetID(w, r)
+	if id == 0 {
+		id = 1
+	}
 
 	product, err := ph.Service.ProductService.GetProductById(id)
 	if err != nil {
