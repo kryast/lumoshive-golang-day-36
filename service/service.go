@@ -7,13 +7,11 @@ import (
 )
 
 type AllService struct {
-	AuthService    AuthService
-	ProductService ProductService
+	ProductService ProductServiceInterface
 }
 
 func NewAllService(repo repository.AllRepository, log *zap.Logger) AllService {
 	return AllService{
-		AuthService:    NewAuthService(repo, log),
 		ProductService: NewProductService(repo, log),
 	}
 }
